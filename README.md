@@ -4,7 +4,7 @@ This repository contains resources for a series of articles in Raspberry Pi Maga
 
 
 1. [Get started with JavaScript](/doc/01%20Get%20Started%20with%20JavaScript%20and%20Node.md)
-1. [Make a tiny server application](/doc/02%20Make%20a%20tiny%20server%20application)
+1. [Make a tiny server application](/doc/02%20Make%20a%20tiny%20server%20application.md)
 1. [Add Express and EJS to the application](/doc/)
 
 ## Get Started with JavaScript and Node.js
