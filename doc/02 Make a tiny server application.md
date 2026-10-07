@@ -60,9 +60,7 @@ The tiny server doesn't actually serve out a page, but it does show how to get s
    const express = require('express');
    const app = express();
    
-   app.listen(3000, () => {
-       console.log('Server running on port 3000');
-   });
+   app.listen(3000);
     ```
 
 5. Run it:
