@@ -1,0 +1,25 @@
+# Installed packages
+node_modules/
+server/node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage output
+coverage/
