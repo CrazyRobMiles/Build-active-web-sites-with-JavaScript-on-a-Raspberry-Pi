@@ -47,3 +47,6 @@ desktop.ini
 
 # Image written by image_server.js at runtime
 picture.jpg
+
+# Pictures stored by db_image_server.js at runtime
+code/db_server/pictures/

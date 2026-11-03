@@ -15,8 +15,9 @@ We are going to use the MongoDB database manager, running inside a Docker contai
 
 * To install Docker follow the steps [here](/doc/03%20Install%20Docker.md)
 * To install MongoDB follow the steps [here](/doc/04%20Install%20MongoDB.md)
+* Then make a server that stores pictures in the database by following the steps [here](/doc/05%20Make%20a%20database%20server.md)
 
-The **code** folder contains **db_server** which holds database sample programs. 
+The **code** folder contains **db_server** which holds the **db_image_server** program. This stores each picture it receives under a three word name, in the same way as the Custard Cream Server. The **python** folder contains **db_image_upload**, which uploads the duck picture to it and prints the name it was given. 
 
 Have fun!
 

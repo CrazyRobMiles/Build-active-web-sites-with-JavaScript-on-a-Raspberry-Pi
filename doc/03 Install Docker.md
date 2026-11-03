@@ -9,7 +9,7 @@ cat /proc/device-tree/model
 uname -m   # should print aarch64 (64-bit) - if it prints armv7l, the OS itself is 32-bit and needs reinstalling as 64-bit first
 ```
 
-If this is a Pi 4 or older, either move this role to a Pi 5 (or any other 64-bit ARMv8.2+ / x86_64 machine on your network), or stop here and keep using Atlas — there isn't a good workaround short of an end-of-life, unpatched MongoDB 4.4.
+If this is a Pi 4 or older, you'll need to run the database on a Pi 5 (or any other 64-bit ARMv8.2+ / x86_64 machine on your network) — there isn't a good workaround short of an end-of-life, unpatched MongoDB 4.4.
 
 ## 1. Install Docker Engine
 
