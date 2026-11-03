@@ -4,14 +4,19 @@ This repository contains resources for a series of articles in Raspberry Pi Maga
 
 ## 1 - Image Storage
 
+* Start by installing JavaScript and node by following the steps [here](/doc/01%20Install%20Node.md)
+* Then make your first tiny server by following the steps [here](/doc/02%20Make%20a%20tiny%20server%20application.md)
+
 The **code** folder contains **tiny_server** which holds the example server programs. It also contains the **python** folder which holds the **image_upload** program and the sample duck image. 
 
 ## 2 - Databases
 
-These exercises require a connection string for a MongoDB database. You can use a remote Atlas database (which is free for small applications) or you can run MongoDB on your Raspberry Pi (as long as you have a Raspberry Pi 5). You can find full details of database setup on the [Custard Cream Server repository](https://github.com/CrazyRobMiles/custard-cream-server)
+We are going to use the MongoDB database manager, running inside a Docker container. 
+
+* To install Docker follow the steps [here](/doc/03%20Install%20Docker.md)
+* To install MongoDB follow the steps [here](/doc/04%20Install%20MongoDB.md)
 
 The **code** folder contains **db_server** which holds database sample programs. 
-
 
 Have fun!
 
