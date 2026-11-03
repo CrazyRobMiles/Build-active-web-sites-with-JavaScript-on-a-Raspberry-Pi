@@ -60,10 +60,9 @@ This is the view page from the database server with three new lines. After the s
 
 ## Run the program
 
-If the database server from the previous howto is still running, press **CTRL+C** to stop it. Then start the new one. If you are using a new terminal you'll need to set the database address again:
+If the database server from the previous howto is still running, press **CTRL+C** to stop it. Then start the new one:
 
 ```bash
-export DATABASE_URL='mongodb://custardCreamApp:<password>@localhost:27017/custardcream'
 node db_counter_server.js
 ```
 
@@ -82,7 +81,7 @@ Upload a new picture with **db_image_upload.py** and view it. Its count starts a
 Log in to the database and look at the pictures:
 
 ```bash
-docker exec -it custard-cream-mongo mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
+docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
 ```javascript

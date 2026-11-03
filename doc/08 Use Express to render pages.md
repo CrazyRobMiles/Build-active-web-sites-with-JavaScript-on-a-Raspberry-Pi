@@ -169,10 +169,9 @@ Code inside `<% %>` tags is run, but nothing is put into the page. The router fo
 
 ## Run the server
 
-Stop any of the other servers that are running, and start the Express server. You'll need to set the database address if you are using a new terminal:
+Stop any of the other servers that are running, and start the Express server:
 
 ```bash
-export DATABASE_URL='mongodb://custardCreamApp:<password>@localhost:27017/custardcream'
 npm start
 ```
 

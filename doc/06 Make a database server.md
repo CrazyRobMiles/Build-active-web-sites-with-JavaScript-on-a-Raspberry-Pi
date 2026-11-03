@@ -169,10 +169,9 @@ The program gets the address of the database from an **environment variable** ca
 
 ## Run the server
 
-Set the database address to the one you made at the end of the MongoDB howto, putting in the password of the **custardCreamApp** user. Then start the server:
+Make sure that **DATABASE_URL** is set, as described at the end of the [Install MongoDB](/doc/04%20Install%20MongoDB.md#5-store-the-database-address-in-an-environment-variable) howto. Then start the server:
 
 ```bash
-export DATABASE_URL='mongodb://custardCreamApp:<password>@localhost:27017/custardcream'
 node db_image_server.js
 ```
 
@@ -183,7 +182,7 @@ Database connected
 Server listening on port 3000
 ```
 
-If your password contains any of the characters `@ : / ? # [ ] %` you'll need to replace them with codes in the address. For example, `@` becomes `%40`. Or you could choose a password that doesn't use them.
+If you see **Set DATABASE_URL to the address of your database before starting the server** instead, the environment variable isn't set in this terminal. If the server waits and then stops with a **MongooseServerSelectionError**, it can't reach the database, so check that MongoDB is running.
 
 ## Upload some pictures
 
@@ -211,7 +210,7 @@ Now open a browser and go to **http://localhost:3000/view/copper-storm-warbler**
 You can see the documents the server has made by logging in to the database:
 
 ```bash
-docker exec -it custard-cream-mongo mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
+docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
 Then ask for the contents of the collection:

@@ -30,12 +30,12 @@ Add these lines to the file that you are editing:
 services:
   mongodb:
     image: mongo:7.0
-    container_name: custard-cream-mongo
+    container_name: mongodb
     restart: unless-stopped
     ports:
       - "127.0.0.1:27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ccsAdmin
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
       MONGO_INITDB_ROOT_PASSWORD: <choose-a-strong-password>
     volumes:
       - /mnt/ssd/mongodb-data:/data/db
@@ -47,7 +47,7 @@ services:
 
 Things worth noting:
 
-- I called the container **custard-cream-mongo** You can call yours what you like, but you'll need to change other references to it in this document. 
+- The container is called **mongodb**, and the administrator account is called **mongoAdmin**. The names are general because one MongoDB server can hold lots of databases for different projects. You can call yours what you like, but you'll need to change the other references to them in these howtos.
 
 - `127.0.0.1:27017:27017` binds the port to the Pi's loopback interface only — nothing elsewhere on your home network can connect, only processes on this Pi (which is all that needs to). Change this if you later want another machine on the LAN to reach it directly. 
 - Pick a real password for `MONGO_INITDB_ROOT_PASSWORD` and keep it somewhere safe (e.g. a password manager) — you'll need it again below.
@@ -66,10 +66,17 @@ Watch for `Waiting for connections` in the log with no errors above it, then `Ct
 Confirm you can connect:
 
 ```bash
-docker exec -it custard-cream-mongo mongosh --username ccsAdmin
+docker exec -it mongodb mongosh --username mongoAdmin
+```
+This command asks Docker to run a program called `mongosh`, the MongoDB Shell, inside the **mongodb** container. The shell lets you type commands to the database server, which is already running in the container. Enter the password when prompted; a `test>` prompt means it's working. Type `exit` to leave.
+
+You don't need to start MongoDB again each time you use it. The `restart: unless-stopped` setting in the compose file tells Docker to restart the container whenever the Pi starts up (Docker itself starts at boot, as described in step 2 of the [Install Docker](/doc/03%20Install%20Docker.md#2-start-docker-when-the-pi-starts) howto). The only time it won't be running is if you stop it yourself, with `docker compose down` or `docker stop`. You can check that it is running with:
+
+```bash
+docker ps
 ```
 
-Enter the password when prompted; a `test>` prompt means it's working. Type `exit` to leave.
+If **mongodb** isn't in the list, go into the **~/mongodb** folder and start it with `docker compose up -d`.
 
 #### Startup warnings
 
@@ -92,25 +99,27 @@ MongoDB has its own user accounts, separate from anything in the app. Each progr
 
 At this point MongoDB has exactly one account:
 
-- **`ccsAdmin`** — the root (administrator) account. You didn't create it by hand: the official `mongo` image created it automatically the first time the container started, from the `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` values in `docker-compose.yml` (step 1). It's stored in MongoDB's built-in `admin` database and can do anything to every database on the server, including creating and deleting users. That makes it the right account for setting things up and for maintenance, but the wrong one for the app to use every day — if the server's database address and password were ever exposed, or a bug in the app ran the wrong query, root access would put every database on this MongoDB at risk.
+- **`mongoAdmin`** — the root (administrator) account. You didn't create it by hand: the official `mongo` image created it automatically the first time the container started, from the `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` values in `docker-compose.yml` (step 1). It's stored in MongoDB's built-in `admin` database and can do anything to every database on the server, including creating and deleting users. That makes it the right account for setting things up and for maintenance, but the wrong one for the app to use every day — if the server's database address and password were ever exposed, or a bug in the app ran the wrong query, root access would put every database on this MongoDB at risk.
 
-This step uses `ccsAdmin` to create one more account in MongoDB:
+This step creates a database for the programs in this series, and an account for them to use. The examples follow on from the Custard Cream Server, so the database is called `custardcream` and the account is called `custardCreamApp`. All the examples share this database, and each one keeps its documents in its own collection.
+
+This step uses `mongoAdmin` to create one more account in MongoDB:
 
 - **`custardCreamApp`** — the account your server programs use, and the only one whose username and password go in the database address they connect to (step 5). It's given the `readWrite` role on the `custardcream` database only: it can read, add, change and delete documents there, but it can't touch any other database, manage users, or change server settings. That's everything the app needs and no more.
 
-After this step there are two MongoDB accounts: `ccsAdmin` for you, when administering the database, and `custardCreamApp` for your programs.
+After this step there are two MongoDB accounts: `mongoAdmin` for you, when administering the database, and `custardCreamApp` for your programs.
 
-These accounts belong to MongoDB, not to the Pi. MongoDB stores them inside its own data, in a system collection in the `admin` database, which on this setup means inside the data files on the SSD. They have nothing to do with the Pi's Linux accounts: `ccsAdmin` can't log in to the Pi, and your Pi login can't connect to MongoDB. Because they're part of the data, whether they come along when the database moves somewhere else depends on how it's moved:
+These accounts belong to MongoDB, not to the Pi. MongoDB stores them inside its own data, in a system collection in the `admin` database, which on this setup means inside the data files on the SSD. They have nothing to do with the Pi's Linux accounts: `mongoAdmin` can't log in to the Pi, and your Pi login can't connect to MongoDB. Because they're part of the data, whether they come along when the database moves somewhere else depends on how it's moved:
 
 - **Copying the data directory** (`/mnt/ssd/mongodb-data`) to another machine running the same MongoDB version — the accounts and their passwords come with it unchanged.
 - **`mongodump`/`mongorestore` of a single database** (with `--db`) — the accounts are left behind unless you add `--dumpDbUsersAndRoles` to the dump and `--restoreDbUsersAndRoles` to the restore. A dump without `--db` includes the `admin` database, and the accounts with it.
 
 Don't confuse these with the logins people use on a website. Those are just documents stored in one of the website's own collections; MongoDB knows nothing about them, and they can't be used to connect to MongoDB. We'll build website logins later in this series.
 
-Log in as `ccsAdmin` (enter the root password from step 1 when prompted):
+Log in as `mongoAdmin` (enter the root password from step 1 when prompted):
 
 ```bash
-docker exec -it custard-cream-mongo mongosh --username ccsAdmin
+docker exec -it mongodb mongosh --username mongoAdmin
 ```
 
 Then switch to the `custardcream` database and create the app account in it, choosing a new password (not the root one):
@@ -129,12 +138,28 @@ exit
 
 Because the `use custardcream` line came before `createUser`, the user is stored in the `custardcream` database rather than `admin`. That's the database MongoDB checks its password against, so every login as this user has to name `custardcream` as its authentication database — the check in step 4 and the database address in step 5 both do.
 
+#### Databases for other apps
+
+The MongoDB server isn't tied to this project. If you write a different app later, you can give it a database of its own on the same server, without installing anything new. Log in as `mongoAdmin` and repeat this step with a new database name and a new account. For example, for an app that records the weather:
+
+```javascript
+use weatherlog
+db.createUser({
+  user: "weatherLogApp",
+  pwd: "<choose-another-strong-password>",
+  roles: [{ role: "readWrite", db: "weatherlog" }]
+})
+exit
+```
+
+The new app connects with its own address, `mongodb://weatherLogApp:<password>@localhost:27017/weatherlog`. Each account can only use its own database, so a bug in one app can't damage the data of another. You can see all the databases on the server by logging in as `mongoAdmin` and entering `show dbs`. A new database doesn't appear in the list until something has been stored in it.
+
 ### 4. Check the app user can use the database
 
 Before pointing the server at it, confirm from the console that the new user can log in and read and write `custardcream`, logging in the same way the server will:
 
 ```bash
-docker exec -it custard-cream-mongo mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
+docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
 Enter the app user's password (the one from step 3, not the root password). The prompt should read `custardcream>`. Then run:
@@ -154,17 +179,50 @@ What to expect:
 - `insertOne` returns `acknowledged: true`, `find` shows the document you just inserted, and `drop` returns `true` — so the user can write, read and delete.
 - `show collections` prints nothing on a fresh install (the test collection has just been dropped). Once you've worked through the next howto, it lists `addresses`.
 
-If login fails with `Authentication failed`, check the password, and check that `--authenticationDatabase` names the database you were `use`-ing when you ran `createUser` in step 3. If login works but `insertOne` fails with `not authorized`, the user's `roles` don't name this database — log in as `ccsAdmin` and fix it with `db.getSiblingDB("custardcream").grantRolesToUser("custardCreamApp", [{ role: "readWrite", db: "custardcream" }])`.
+If login fails with `Authentication failed`, check the password, and check that `--authenticationDatabase` names the database you were `use`-ing when you ran `createUser` in step 3. If login works but `insertOne` fails with `not authorized`, the user's `roles` don't name this database — log in as `mongoAdmin` and fix it with `db.getSiblingDB("custardcream").grantRolesToUser("custardCreamApp", [{ role: "readWrite", db: "custardcream" }])`.
 
-### 5. Remember the database address
+### 5. Store the database address in an environment variable
 
-You now have a url that a program can use to connect to the database: 
+You now have an address that a program can use to connect to the database, with the password of the `custardCreamApp` user in place of `<password>`:
 
 ```
-DATABASE_URL=mongodb://custardCreamApp:<password>@localhost:27017/custardcream
+mongodb://custardCreamApp:<password>@localhost:27017/custardcream
 ```
 
 No `authSource` is needed: MongoDB uses the database named in the path (`custardcream`) as the authentication database by default, which is where step 3 created the user. Adding `?authSource=admin` here would make the login fail.
+
+If your password contains any of the characters `@ : / ? # [ ] %` you'll need to replace them with codes in the address. For example, `@` becomes `%40`. Or you could choose a password that doesn't use them.
+
+All the example programs in this series get the address from an **environment variable** called `DATABASE_URL`. An environment variable is a named value that the terminal passes to every program you start from it. Keeping the address there, rather than in the programs, means that you can share a program without sharing your password.
+
+To set the variable in the terminal you are using, enter:
+
+```bash
+export DATABASE_URL='mongodb://custardCreamApp:<password>@localhost:27017/custardcream'
+```
+
+The single quotes stop the terminal from doing anything with the special characters in the address. You can check the value like this:
+
+```bash
+echo $DATABASE_URL
+```
+
+This only lasts until you close the terminal. When you open a new one (or log in to the Pi again), the variable has gone. To have it set every time you open a terminal, add the same `export` line to the end of the file `.bashrc` in your home folder. The terminal runs the commands in this file each time it starts:
+
+```bash
+nano ~/.bashrc
+```
+
+Add the `export` line at the very end of the file, then save it and exit. The change takes effect in new terminals. To use it in the current terminal straight away, enter:
+
+```bash
+source ~/.bashrc
+```
+
+Things worth noting:
+
+- `.bashrc` now contains your database password as plain text. Make sure that only you can read the file with `chmod 600 ~/.bashrc`.
+- Only programs started from your terminals get the variable. A program that is started in some other way, for example by the Pi when it boots, doesn't read `.bashrc`, so it has to be given the address in its own settings.
 
 Now that the database is running, you can find out how a JavaScript program can [use Mongoose to store information in it](/doc/05%20Use%20Mongoose.md).
 

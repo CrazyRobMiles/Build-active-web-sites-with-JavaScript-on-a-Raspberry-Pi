@@ -117,15 +117,7 @@ The program gets the address of the database from the **DATABASE_URL** environme
 
 ## Run the program
 
-Set the database address to the one you made at the end of the MongoDB howto, putting in the password of the **custardCreamApp** user:
-
-```bash
-export DATABASE_URL='mongodb://custardCreamApp:<password>@localhost:27017/custardcream'
-```
-
-If your password contains any of the characters `@ : / ? # [ ] %` you'll need to replace them with codes in the address. For example, `@` becomes `%40`. Or you could choose a password that doesn't use them.
-
-Now add some addresses. Put quotes around the name and the address, so that each one is treated as a single item, even though it contains spaces:
+Make sure that **DATABASE_URL** is set, as described at the end of the [Install MongoDB](/doc/04%20Install%20MongoDB.md#5-store-the-database-address-in-an-environment-variable) howto. Then add some addresses. Put quotes around the name and the address, so that each one is treated as a single item, even though it contains spaces:
 
 ```bash
 node add_address.js "Rob Miles" "1 Main Street, Hull"
@@ -138,6 +130,8 @@ Added Rob Miles with id 6ae9eaa70adfb38ef0acacc4
 Added Jane Smith with id 6ae9eaa74cbac64c3892f1fe
 Added Rob Miles with id 6ae9eaa82cfe63f3865ebabc
 ```
+
+If the program waits for about 30 seconds and then stops with an error that contains **MongooseServerSelectionError** and **ECONNREFUSED**, it couldn't reach the database. Check that MongoDB is running, as described in the [Install MongoDB](/doc/04%20Install%20MongoDB.md#2-start-it-and-confirm-its-healthy) howto.
 
 Your ids will be different. Notice that Rob Miles is in the address book twice, with two different addresses. Nothing in the schema says that names must be different, so this is allowed. Each entry has its own id, so the database can tell them apart.
 
@@ -211,7 +205,7 @@ The name has to match exactly. If you search for **rob miles** (without capital 
 You can see the documents that the programs have made by logging in to the database:
 
 ```bash
-docker exec -it custard-cream-mongo mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
+docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
 ```javascript

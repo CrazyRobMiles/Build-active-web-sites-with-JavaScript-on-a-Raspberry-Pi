@@ -26,5 +26,18 @@ docker --version
 docker compose version
 docker run hello-world
 ```
-The first two commands get the versions of docker and compose. The third command will download and run a sample docker program that says hello. Now that you have docker ruinning, you can move on to install MongoDB
+The first two commands get the versions of docker and compose. The third command will download and run a sample docker program that says hello.
+
+## 2. Start Docker when the Pi starts
+
+Docker runs as a service, a program that the Pi starts for you. The install script sets it to start each time the Pi starts up, but it is worth making sure:
+
+```bash
+sudo systemctl enable docker
+systemctl is-enabled docker
+```
+
+The first command tells the Pi to start Docker at boot (if it was already set, nothing changes). The second one should print `enabled`. When Docker starts, it restarts any containers that are set to restart, which is how the database in the next howto will start by itself.
+
+Now that you have docker running, you can move on to install MongoDB.
 
