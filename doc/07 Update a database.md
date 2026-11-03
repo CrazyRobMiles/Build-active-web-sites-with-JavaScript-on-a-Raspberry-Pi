@@ -131,6 +131,6 @@ This tells MongoDB to find the picture and **inc**rease its **views** value by 1
 
 ## What next?
 
-The view page is a string of HTML with values from the database dropped into it. That's fine for one or two values, but it gets messy as pages grow. Next we'll [use Express to render pages](/doc/07%20Use%20Express%20to%20render%20pages.md), which is a much better way to show the information in each document.
+The view page is a string of HTML with values from the database dropped into it. That's fine for one or two values, but it gets messy as pages grow. Next we'll [use Express to render pages](/doc/08%20Use%20Express%20to%20render%20pages.md), which is a much better way to show the information in each document.
 
 [home](/README.md)

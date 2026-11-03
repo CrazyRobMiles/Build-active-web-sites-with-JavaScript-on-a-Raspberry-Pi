@@ -1,6 +1,6 @@
 # Make a database server
 
-The image server in **tiny_server** can store one picture. Every time you upload a new one it overwrites **picture.jpg**, so only the latest picture survives. The Custard Cream Server does better than that. It gives every picture a three word name, such as **copper-storm-warbler**, and anyone who knows the name can go back and look at the picture. In this howto we are going to build a server that does the same thing, using the MongoDB database you installed in the previous step.
+The image server in **tiny_server** can store one picture. Every time you upload a new one it overwrites **picture.jpg**, so only the latest picture survives. The Custard Cream Server does better than that. It gives every picture a three word name, such as **copper-storm-warbler**, and anyone who knows the name can go back and look at the picture. In this howto we are going to build a server that does the same thing, using the MongoDB database and the Mongoose library that you've met in the previous howtos.
 
 We won't worry about logins here. Anyone can upload a picture to this server. We will cover logins and sessions later in this series.
 
@@ -33,7 +33,7 @@ npm init -y
 npm install express mongoose
 ```
 
-You already know **express**. The new library is **mongoose**, which lets a JavaScript program store and find things in a MongoDB database. You'll also need a copy of the file **wordlist.json** from **code/tiny_db_server**. This holds the 200 words that the three word names are made from.
+You already know **express**, and you used **mongoose** to make the address book. You'll also need a copy of the file **wordlist.json** from **code/tiny_db_server**. This holds the 200 words that the three word names are made from.
 
 ## The program
 
@@ -51,9 +51,9 @@ const pictureSchema = new mongoose.Schema({
 const Picture = mongoose.model("Picture", pictureSchema, "examplepictures");
 ```
 
-A **schema** describes the information that we store about each picture: the three word phrase, the name of the file and the date it was uploaded. The `unique: true` setting tells the database that no two pictures may have the same phrase. If the date isn't given, `default: Date.now` fills in the current date and time.
+This works in the same way as the address book. The schema describes the information that we store about each picture: the three word phrase, the name of the file and the date it was uploaded. There are two new settings. The `unique: true` setting tells the database that no two pictures may have the same phrase. If the date isn't given, `default: Date.now` fills in the current date and time.
 
-The **model** called `Picture` is the object we use to talk to the database. It stores its documents in a **collection** called **examplepictures**. A collection is a bit like a table in a spreadsheet, with one document for each picture. We use the name **examplepictures** so that this example doesn't get mixed up with the **pictures** collection of a Custard Cream Server using the same database.
+The model called `Picture` stores its documents in a collection called **examplepictures**. This time the schema and model are in the same file as the rest of the program, because only this program uses them. We use the name **examplepictures** so that this example doesn't get mixed up with the **pictures** collection of a Custard Cream Server using the same database.
 
 ### Make a three word name
 
@@ -238,7 +238,7 @@ If you stop the server and start it again, all the pictures are still there. The
 
 ## What next?
 
-Once a picture is stored, the server never changes it. Next we'll [update the database](/doc/06%20Update%20a%20database.md) by adding a view counter to each picture.
+Once a picture is stored, the server never changes it. Next we'll [update the database](/doc/07%20Update%20a%20database.md) by adding a view counter to each picture.
 
 Anyone who can reach the server can also upload pictures to it. Later in this series we'll add logins and sessions, so that only people (and cameras) that you trust can upload pictures.
 

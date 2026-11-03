@@ -152,7 +152,7 @@ What to expect:
 
 - `authInfo` lists `custardCreamApp` under `authenticatedUsers`, with `readWrite` on `custardcream` under `authenticatedUserRoles`.
 - `insertOne` returns `acknowledged: true`, `find` shows the document you just inserted, and `drop` returns `true` — so the user can write, read and delete.
-- `show collections` prints nothing on a fresh install (the test collection has just been dropped). Once you've stored some pictures with the database server in the next howto, it lists `examplepictures`.
+- `show collections` prints nothing on a fresh install (the test collection has just been dropped). Once you've worked through the next howto, it lists `addresses`.
 
 If login fails with `Authentication failed`, check the password, and check that `--authenticationDatabase` names the database you were `use`-ing when you ran `createUser` in step 3. If login works but `insertOne` fails with `not authorized`, the user's `roles` don't name this database — log in as `ccsAdmin` and fix it with `db.getSiblingDB("custardcream").grantRolesToUser("custardCreamApp", [{ role: "readWrite", db: "custardcream" }])`.
 
@@ -166,5 +166,5 @@ DATABASE_URL=mongodb://custardCreamApp:<password>@localhost:27017/custardcream
 
 No `authSource` is needed: MongoDB uses the database named in the path (`custardcream`) as the authentication database by default, which is where step 3 created the user. Adding `?authSource=admin` here would make the login fail.
 
-Now that the database is running, you can [build a server that stores pictures in it](/doc/05%20Make%20a%20database%20server.md).
+Now that the database is running, you can find out how a JavaScript program can [use Mongoose to store information in it](/doc/05%20Use%20Mongoose.md).
 
