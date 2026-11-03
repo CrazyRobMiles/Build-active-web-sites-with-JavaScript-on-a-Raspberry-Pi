@@ -2,13 +2,13 @@
 
 The image server in **tiny_server** can store one picture. Every time you upload a new one it overwrites **picture.jpg**, so only the latest picture survives. The Custard Cream Server does better than that. It gives every picture a three word name, such as **copper-storm-warbler**, and anyone who knows the name can go back and look at the picture. In this howto we are going to build a server that does the same thing, using the MongoDB database you installed in the previous step.
 
-We won't worry about logins here. Anyone can upload a picture to this server. We will cover logins and sessions in the next section of this series.
+We won't worry about logins here. Anyone can upload a picture to this server. We will cover logins and sessions later in this series.
 
 ## How it works
 
 Each picture is stored in two pieces:
 
-* The picture itself is saved as a file in a folder called **pictures**. The file is given a random name, such as **8ccde564-f829-43e3-adaa-8f11bd88db28.jpg**.
+* The picture itself is saved as a file in the **pictures** folder inside the **code** folder. All the database examples share this folder, in the same way that they share the database. The file is given a random name, such as **8ccde564-f829-43e3-adaa-8f11bd88db28.jpg**.
 * A **document** is added to the database. It records the three word name of the picture and the name of the file that holds it.
 
 When someone asks for **copper-storm-warbler**, the server looks up that name in the database, finds the file name and sends back the file. Databases are very good at finding things quickly, so this works just as well with ten thousand pictures as it does with ten.
@@ -17,23 +17,23 @@ The file name has nothing to do with the three word name. So even if someone cou
 
 ## Make the project
 
-The finished program is in the **code/db_server** folder. If you have a copy of this repository on your Pi, go into that folder and install the libraries it needs:
+The finished program is in the **code/tiny_db_server** folder. If you have a copy of this repository on your Pi, go into that folder and install the libraries it needs:
 
 ```bash
-cd code/db_server
+cd code/tiny_db_server
 npm install
 ```
 
 If you are building it yourself, make a new project and add the two libraries it uses:
 
 ```bash
-mkdir db_server
-cd db_server
+mkdir tiny_db_server
+cd tiny_db_server
 npm init -y
 npm install express mongoose
 ```
 
-You already know **express**. The new library is **mongoose**, which lets a JavaScript program store and find things in a MongoDB database. You'll also need a copy of the file **wordlist.json** from **code/db_server**. This holds the 200 words that the three word names are made from.
+You already know **express**. The new library is **mongoose**, which lets a JavaScript program store and find things in a MongoDB database. You'll also need a copy of the file **wordlist.json** from **code/tiny_db_server**. This holds the 200 words that the three word names are made from.
 
 ## The program
 
@@ -112,7 +112,26 @@ This works like the upload in **image_server.js**, with three changes:
 
 ### Find a picture
 
+The server shows pictures in the same way as **image_server.js**. The **/view** address sends back a web page that contains the picture, and the **/picture** address sends the picture file that goes in the page. The only change is that the server uses the database to find the picture file.
+
 ```javascript
+app.get("/view/:phrase", async (req, res) => {
+    const picture = await Picture.findOne({ phrase: req.params.phrase });
+
+    if (picture === null) {
+        res.status(404).send("Picture not found");
+        return;
+    }
+
+    res.send(`
+        <html>
+            <body>
+                <img src="/picture/${picture.phrase}">
+            </body>
+        </html>
+    `);
+});
+
 app.get("/picture/:phrase", async (req, res) => {
     const picture = await Picture.findOne({ phrase: req.params.phrase });
 
@@ -125,9 +144,7 @@ app.get("/picture/:phrase", async (req, res) => {
 });
 ```
 
-The `:phrase` part of the address tells Express to put whatever is in that part of the address into `req.params.phrase`. So a request for **/picture/copper-storm-warbler** looks up **copper-storm-warbler** in the database. If the picture is found, the server sends back its file. If not, it sends status 404, which means "not found".
-
-The **/view/:phrase** address works the same way, but sends back a web page that shows the picture and the date it was uploaded. The **/** address uses `Picture.find()` to get every picture in the database, newest first, and shows a list of links to them.
+The `:phrase` part of each address tells Express to put whatever is in that part of the address into `req.params.phrase`. So a request for **/view/copper-storm-warbler** looks up **copper-storm-warbler** in the database. If the picture is found, the server sends back a page with an image in it. The browser then asks for the image at **/picture/copper-storm-warbler**, which looks up the phrase again and sends back the picture file. If the phrase isn't in the database, the server sends status 404, which means "not found".
 
 ### Connect to the database
 
@@ -148,7 +165,7 @@ async function start() {
 }
 ```
 
-The program gets the address of the database from an **environment variable** called **DATABASE_URL**. The address contains the database password, so it's best to keep it out of the program. That way you can share the program without sharing the password. The `start` function makes the **pictures** folder if it isn't there yet, connects to the database and then starts the server.
+The program gets the address of the database from an **environment variable** called **DATABASE_URL**. The address contains the database password, so it's best to keep it out of the program. That way you can share the program without sharing the password. The `start` function makes the **pictures** folder (next to the **tiny_db_server** folder) if it isn't there yet, connects to the database and then starts the server.
 
 ## Run the server
 
@@ -187,7 +204,7 @@ Run it again and you'll get a different name, because each upload is stored as a
 Stored 8ccde564-f829-43e3-adaa-8f11bd88db28.jpg as copper-storm-warbler
 ```
 
-Now open a browser and go to **http://localhost:3000** (or use the address of your Pi if you are browsing from another computer). You'll see a list of all the pictures you've uploaded. Click on one to view it.
+Now open a browser and go to **http://localhost:3000/view/copper-storm-warbler**, using the name your picture was given. If you are browsing from another computer, use the address of your Pi instead of **localhost**. You should see the duck. If you make a mistake in the name you'll see the message **Picture not found**.
 
 ## Look inside the database
 
@@ -221,6 +238,8 @@ If you stop the server and start it again, all the pictures are still there. The
 
 ## What next?
 
-At the moment anyone who can reach the server can upload pictures to it. In the next section we'll add logins and sessions, so that only people (and cameras) that you trust can upload pictures.
+Once a picture is stored, the server never changes it. Next we'll [update the database](/doc/06%20Update%20a%20database.md) by adding a view counter to each picture.
+
+Anyone who can reach the server can also upload pictures to it. Later in this series we'll add logins and sessions, so that only people (and cameras) that you trust can upload pictures.
 
 [home](/README.md)

@@ -105,7 +105,7 @@ These accounts belong to MongoDB, not to the Pi. MongoDB stores them inside its 
 - **Copying the data directory** (`/mnt/ssd/mongodb-data`) to another machine running the same MongoDB version — the accounts and their passwords come with it unchanged.
 - **`mongodump`/`mongorestore` of a single database** (with `--db`) — the accounts are left behind unless you add `--dumpDbUsersAndRoles` to the dump and `--restoreDbUsersAndRoles` to the restore. A dump without `--db` includes the `admin` database, and the accounts with it.
 
-Don't confuse these with the logins people use on a website. Those are just documents stored in one of the website's own collections; MongoDB knows nothing about them, and they can't be used to connect to MongoDB. We'll build website logins in the next section of this series.
+Don't confuse these with the logins people use on a website. Those are just documents stored in one of the website's own collections; MongoDB knows nothing about them, and they can't be used to connect to MongoDB. We'll build website logins later in this series.
 
 Log in as `ccsAdmin` (enter the root password from step 1 when prompted):
 

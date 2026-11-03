@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include("partials/head", { title: "Pictures" }) %>
+</head>
+<body>
+    <h1>Pictures</h1>
+
+    <% if (pictures.length === 0) { %>
+        <p>No pictures have been uploaded yet.</p>
+    <% } else { %>
+        <ul>
+            <% for (const picture of pictures) { %>
+                <li>
+                    <a href="/view/<%= picture.phrase %>"><%= picture.phrase %></a>
+                    (views: <%= picture.views %>)
+                </li>
+            <% } %>
+        </ul>
+    <% } %>
+</body>
+</html>

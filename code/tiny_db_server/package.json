@@ -1,5 +1,5 @@
 {
-  "name": "db_server",
+  "name": "tiny_db_server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

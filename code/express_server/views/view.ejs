@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include("partials/head", { title: picture.phrase }) %>
+</head>
+<body>
+    <h1><%= picture.phrase %></h1>
+    <img src="/picture/<%= picture.phrase %>" alt="The picture called <%= picture.phrase %>">
+    <p>Uploaded: <%= picture.uploadedAt.toLocaleString() %></p>
+    <p>Views: <%= picture.views %></p>
+    <p><a href="/">All pictures</a></p>
+</body>
+</html>

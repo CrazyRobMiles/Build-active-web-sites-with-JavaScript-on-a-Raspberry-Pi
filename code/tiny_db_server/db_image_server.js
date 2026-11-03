@@ -11,7 +11,8 @@ const crypto = require("crypto");
 const words = require("./wordlist.json");
 
 const databaseUrl = process.env.DATABASE_URL;
-const picturesFolder = path.join(__dirname, "pictures");
+// All the example servers share the pictures folder, as they share the database
+const picturesFolder = path.join(__dirname, "..", "pictures");
 const port = 3000;
 
 // The schema describes the information we store about each picture
@@ -65,23 +66,6 @@ app.post("/upload", imageMiddleware, async (req, res) => {
     res.send(phrase);
 });
 
-app.get("/", async (req, res) => {
-    const pictures = await Picture.find().sort({ uploadedAt: -1 });
-
-    const links = pictures.map(picture =>
-        `<li><a href="/view/${picture.phrase}">${picture.phrase}</a></li>`
-    );
-
-    res.send(`
-        <html>
-            <body>
-                <h1>Stored pictures</h1>
-                <ul>${links.join("")}</ul>
-            </body>
-        </html>
-    `);
-});
-
 app.get("/view/:phrase", async (req, res) => {
     const picture = await Picture.findOne({ phrase: req.params.phrase });
 
@@ -93,9 +77,7 @@ app.get("/view/:phrase", async (req, res) => {
     res.send(`
         <html>
             <body>
-                <h1>${picture.phrase}</h1>
                 <img src="/picture/${picture.phrase}">
-                <p>Uploaded ${picture.uploadedAt.toString()}</p>
             </body>
         </html>
     `);
