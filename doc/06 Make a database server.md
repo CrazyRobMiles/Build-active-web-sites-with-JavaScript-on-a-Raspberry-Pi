@@ -53,7 +53,7 @@ const Picture = mongoose.model("Picture", pictureSchema, "examplepictures");
 
 This works in the same way as the address book. The schema describes the information that we store about each picture: the three word phrase, the name of the file and the date it was uploaded. There are two new settings. The `unique: true` setting tells the database that no two pictures may have the same phrase. If the date isn't given, `default: Date.now` fills in the current date and time.
 
-The model called `Picture` stores its documents in a collection called **examplepictures**. This time the schema and model are in the same file as the rest of the program, because only this program uses them. We use the name **examplepictures** so that this example doesn't get mixed up with the **pictures** collection of a Custard Cream Server using the same database.
+The model called `Picture` stores its documents in a collection called **examplepictures**. We use the name **examplepictures** so that this example doesn't get mixed up with the **pictures** collection of a Custard Cream Server using the same database.
 
 ### Make a three word name
 

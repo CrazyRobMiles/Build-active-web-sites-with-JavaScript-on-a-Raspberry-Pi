@@ -61,11 +61,13 @@ const pictureSchema = new mongoose.Schema({
 module.exports = mongoose.model("Picture", pictureSchema, "examplepictures");
 ```
 
-This is the same schema as the counter server, but it is now in a file of its own. The last line uses `module.exports` to make the `Picture` model available to the rest of the program. Any file that wants to use the database gets the model like this:
+This is the same schema as the counter server, but it is now in a file of its own. So far, each of our programs has been a single file. A program made from several files needs a way to share things between them. In Node, each file decides what it shares with other files by putting it in `module.exports`. The last line of **schemas/picture.js** makes the `Picture` model available to the rest of the program. Any file that wants to use the database gets the model like this:
 
 ```javascript
 const Picture = require("../schemas/picture");
 ```
+
+You've used `require` before, to load libraries such as **express** and **mongoose**. When the name starts with **./** or **../**, `require` loads one of your own files instead, and gives back whatever that file put in `module.exports`. **../** means "the folder above this one". The routers are in the **pages** folder, so **../schemas/picture** means the file **picture.js** in the **schemas** folder next to it. You don't need to put **.js** on the end of the name.
 
 Because the schema is only in one place, there is only one place to change if we want to store something new about a picture.
 

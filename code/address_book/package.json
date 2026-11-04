@@ -1,9 +1,9 @@
 {
   "name": "address_book",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "address_book.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node address_book.js"
   },
   "keywords": [],
   "author": "",
