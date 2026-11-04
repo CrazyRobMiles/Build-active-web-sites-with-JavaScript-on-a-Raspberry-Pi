@@ -196,6 +196,8 @@ Here are some changes you could make to the application. Each one only needs cha
 
 ## What next?
 
+You now know enough to build your own tools. Next we'll use Express and templates to [make a database browser](/doc/09%20Make%20a%20database%20browser.md), which lets you look at everything in the database from a web browser.
+
 At the moment anyone who can reach the server can upload pictures. In the next section we'll add logins and sessions, so that only people (and cameras) that you trust can upload pictures.
 
 [home](/README.md)

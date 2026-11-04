@@ -169,7 +169,7 @@ The program gets the address of the database from an **environment variable** ca
 
 ## Run the server
 
-Make sure that **DATABASE_URL** is set, as described at the end of the [Install MongoDB](/doc/04%20Install%20MongoDB.md#5-store-the-database-address-in-an-environment-variable) howto. Then start the server:
+Make sure that **DATABASE_URL** is set to the address of your database, as described at the end of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#5-store-the-database-address-in-an-environment-variable) or [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#7-store-the-database-address-in-an-environment-variable) howto. Then start the server:
 
 ```bash
 node db_image_server.js
@@ -182,7 +182,7 @@ Database connected
 Server listening on port 3000
 ```
 
-If you see **Set DATABASE_URL to the address of your database before starting the server** instead, the environment variable isn't set in this terminal. If the server waits and then stops with a **MongooseServerSelectionError**, it can't reach the database, so check that MongoDB is running.
+If you see **Set DATABASE_URL to the address of your database before starting the server** instead, the environment variable isn't set in this terminal. If the server waits and then stops with a **MongooseServerSelectionError**, it can't reach the database. Check that MongoDB is running on your Pi or, if you are using Atlas, that your home network is in the Network Access list.
 
 ## Upload some pictures
 
@@ -212,6 +212,8 @@ You can see the documents the server has made by logging in to the database:
 ```bash
 docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
+
+If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in step 6 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#6-check-the-connection) howto.
 
 Then ask for the contents of the collection:
 

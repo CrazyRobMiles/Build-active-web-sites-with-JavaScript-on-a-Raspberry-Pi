@@ -1,0 +1,22 @@
+body {
+    font-family: sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+code {
+    display: block;
+    color: #555;
+    overflow-wrap: anywhere;
+}
+
+pre {
+    background: #f4f4f4;
+    padding: 12px;
+    overflow-x: auto;
+}

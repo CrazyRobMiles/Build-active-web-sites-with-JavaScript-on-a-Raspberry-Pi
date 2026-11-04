@@ -11,16 +11,22 @@ The **code** folder contains **tiny_server** which holds the example server prog
 
 ## 2 - Databases
 
-We are going to use the MongoDB database manager, running inside a Docker container. 
+    We are going to use the MongoDB database which is a bit like a web server, but rather than responding to requests for web pages, it responds to database commands. The database application is accessed via a **connection string**. The connection string is super-important. It contains the network address of the server and credentials to access the database on it. The connection string acts as the "key" to the database. If you have that key, you can send the database commands to read, write and delete database entries. 
 
-* To install Docker follow the steps [here](/doc/03%20Install%20Docker.md)
-* To install MongoDB follow the steps [here](/doc/04%20Install%20MongoDB.md)
+    We don't want to embed this in our program code so we create an environment variable on the host computer and then use this in our code. We call the environment variable **DATABASE_URL**. As far as the software is concerned, that address *is* the database. Where the database is running makes no difference to how the programs work, so you can choose whichever kind of database suits your Pi. Do one of these:
+
+* **If you have a Raspberry Pi 4 or older, or you don't want to run the database yourself**, use MongoDB Atlas, which runs the database on the internet for you. The free version is plenty for this series. To connect to Atlas follow the steps [here](/doc/03%20Connect%20to%20MongoDB%20Atlas.md)
+* **If you have a Raspberry Pi 5** (ideally with an SSD), you can run MongoDB on the Pi itself, inside a Docker container. To install Docker and MongoDB follow the steps [here](/doc/04%20Install%20Local%20MongoDB.md)
+
+Current versions of MongoDB need an ARMv8.2-A processor, which means a Pi 5. They won't run on a Pi 4 or older, but those models can run all the example programs perfectly well with Atlas. Each howto ends with the address of your database stored in **DATABASE_URL**, and from then on the rest of the series is exactly the same:
+
 * Then find out how a JavaScript program uses the database with Mongoose by following the steps [here](/doc/05%20Use%20Mongoose.md)
 * Then make a server that stores pictures in the database by following the steps [here](/doc/06%20Make%20a%20database%20server.md)
 * Then add a view counter to each picture by following the steps [here](/doc/07%20Update%20a%20database.md)
-* Finally, use Express to organise the site and render its pages by following the steps [here](/doc/08%20Use%20Express%20to%20render%20pages.md)
+* Then use Express to organise the site and render its pages by following the steps [here](/doc/08%20Use%20Express%20to%20render%20pages.md)
+* Finally, make a web app that shows everything in the database by following the steps [here](/doc/09%20Make%20a%20database%20browser.md)
 
-The **code** folder contains **address_book**, which holds two command line programs that use Mongoose to store and list names and addresses. It also contains **tiny_db_server** which holds the **db_image_server** program. This stores each picture it receives under a three word name, in the same way as the Custard Cream Server. It also holds **db_counter_server**, which adds a view counter to each picture. The **express_server** folder holds the same picture server organised as a proper Express application, with pages made from templates. All these servers use the same database, and store their picture files in the **code/pictures** folder. The **python** folder contains **db_image_upload**, which uploads the duck picture to a server and prints the name it was given. 
+The **code** folder contains **address_book**, which holds two command line programs that use Mongoose to store and list names and addresses. It also contains **tiny_db_server** which holds the **db_image_server** program. This stores each picture it receives under a three word name, in the same way as the Custard Cream Server. It also holds **db_counter_server**, which adds a view counter to each picture. The **express_server** folder holds the same picture server organised as a proper Express application, with pages made from templates. All these servers use the same database, and store their picture files in the **code/pictures** folder. The **db_browser** folder holds a tiny web app, a bit like MongoDB Compass, that shows the collections and documents in the database. The **python** folder contains **db_image_upload**, which uploads the duck picture to a server and prints the name it was given. 
 
 Have fun!
 

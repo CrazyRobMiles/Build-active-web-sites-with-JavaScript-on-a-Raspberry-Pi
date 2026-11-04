@@ -117,7 +117,7 @@ The program gets the address of the database from the **DATABASE_URL** environme
 
 ## Run the program
 
-Make sure that **DATABASE_URL** is set, as described at the end of the [Install MongoDB](/doc/04%20Install%20MongoDB.md#5-store-the-database-address-in-an-environment-variable) howto. Then add some addresses. Put quotes around the name and the address, so that each one is treated as a single item, even though it contains spaces:
+Make sure that **DATABASE_URL** is set to the address of your database, as described at the end of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#5-store-the-database-address-in-an-environment-variable) or [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#7-store-the-database-address-in-an-environment-variable) howto. Then add some addresses. Put quotes around the name and the address, so that each one is treated as a single item, even though it contains spaces:
 
 ```bash
 node add_address.js "Rob Miles" "1 Main Street, Hull"
@@ -131,7 +131,7 @@ Added Jane Smith with id 6ae9eaa74cbac64c3892f1fe
 Added Rob Miles with id 6ae9eaa82cfe63f3865ebabc
 ```
 
-If the program waits for about 30 seconds and then stops with an error that contains **MongooseServerSelectionError** and **ECONNREFUSED**, it couldn't reach the database. Check that MongoDB is running, as described in the [Install MongoDB](/doc/04%20Install%20MongoDB.md#2-start-it-and-confirm-its-healthy) howto.
+If the program waits for about 30 seconds and then stops with an error that contains **MongooseServerSelectionError**, it couldn't reach the database. If you are using a database on your Pi, check that MongoDB is running, as described in step 4 of the [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#4-start-it-and-confirm-its-healthy) howto. If you are using Atlas, check that the address of your home network is in the Network Access list, as described in step 3 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#3-let-your-pi-connect) howto.
 
 Your ids will be different. Notice that Rob Miles is in the address book twice, with two different addresses. Nothing in the schema says that names must be different, so this is allowed. Each entry has its own id, so the database can tell them apart.
 
@@ -207,6 +207,8 @@ You can see the documents that the programs have made by logging in to the datab
 ```bash
 docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
+
+If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in step 6 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#6-check-the-connection) howto.
 
 ```javascript
 db.addresses.find()

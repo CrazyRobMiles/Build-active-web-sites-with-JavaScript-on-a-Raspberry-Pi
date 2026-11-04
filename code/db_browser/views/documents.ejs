@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include("partials/head", { title: name }) %>
+</head>
+<body>
+    <p><a href="/">All collections</a></p>
+    <h1><%= name %></h1>
+    <p><%= count %> documents. Page <%= page %> of <%= pageCount %>.</p>
+
+    <ul>
+        <% for (const document of documents) { %>
+            <li>
+                <a href="/collection/<%= encodeURIComponent(name) %>/<%= encodeURIComponent(document.id) %>"><%= document.id %></a>
+                <code><%= document.summary %></code>
+            </li>
+        <% } %>
+    </ul>
+
+    <p>
+        <% if (page > 1) { %>
+            <a href="?page=<%= page - 1 %>">Previous page</a>
+        <% } %>
+        <% if (page < pageCount) { %>
+            <a href="?page=<%= page + 1 %>">Next page</a>
+        <% } %>
+    </p>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include("partials/head", { title: databaseName }) %>
+</head>
+<body>
+    <h1>The <%= databaseName %> database</h1>
+
+    <% if (collections.length === 0) { %>
+        <p>There are no collections in this database yet.</p>
+    <% } else { %>
+        <ul>
+            <% for (const collection of collections) { %>
+                <li>
+                    <a href="/collection/<%= encodeURIComponent(collection.name) %>"><%= collection.name %></a>
+                    (documents: <%= collection.count %>)
+                </li>
+            <% } %>
+        </ul>
+    <% } %>
+</body>
+</html>
