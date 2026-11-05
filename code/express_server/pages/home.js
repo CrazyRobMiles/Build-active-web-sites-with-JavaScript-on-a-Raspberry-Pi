@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     const pictures = await Picture.find().sort({ uploadedAt: -1 });
-    res.render("index", { pictures });
+    res.render("index", { pictures: pictures });
 });
 
 module.exports = router;

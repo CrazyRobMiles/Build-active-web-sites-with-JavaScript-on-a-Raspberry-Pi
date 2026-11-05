@@ -29,6 +29,8 @@ The single quotes stop the terminal from doing anything with the special charact
 echo $DATABASE_URL
 ```
 
+Make sure you include the word `export`. It tells the terminal to pass the variable to the programs you start. Without it, `echo` still shows the value, but your programs can't see it.
+
 This only lasts until you close the terminal. When you open a new one (or log in to the Pi again), the variable has gone. To have it set every time you open a terminal, add the same `export` line to the end of the file `.bashrc` in your home folder. The terminal runs the commands in this file each time it starts:
 
 ```bash
@@ -364,6 +366,7 @@ The entry was not stored: AddressBook validation failed: address: Path `address`
 
 ### If it doesn't work
 
+* If the program says **Set DATABASE_URL to the address of your database first**, but `echo $DATABASE_URL` shows the connection string, you've left out the word `export` when you set the variable. Without `export`, the terminal keeps the variable to itself and doesn't pass it to the programs it starts. Set it again with `export` at the start of the line, and check the line in your `.bashrc` file too.
 * If the program waits for about 30 seconds and then stops with an error that contains **MongooseServerSelectionError**, it couldn't reach the database. If you are using a database on your Pi, check that MongoDB is running, as described in step 4 of the [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#4-start-it-and-confirm-its-healthy) howto. If you are using Atlas, check that the address of your home network is in the Network Access list, as described in step 3 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#3-let-your-pi-connect) howto.
 * If you see **Authentication failed** or **bad auth**, check the name and password in the connection string.
 

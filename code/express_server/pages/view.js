@@ -16,7 +16,7 @@ router.get("/:phrase", async (req, res) => {
     picture.views = picture.views + 1;
     await picture.save();
 
-    res.render("view", { picture });
+    res.render("view", { picture: picture });
 });
 
 module.exports = router;

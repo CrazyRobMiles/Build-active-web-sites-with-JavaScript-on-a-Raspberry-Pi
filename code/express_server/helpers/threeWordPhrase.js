@@ -12,7 +12,7 @@ function randomPhrase() {
 async function makeUniquePhrase() {
     for (let attempt = 0; attempt < 10; attempt++) {
         const phrase = randomPhrase();
-        const existing = await Picture.findOne({ phrase });
+        const existing = await Picture.findOne({ phrase: phrase });
         if (existing === null) {
             return phrase;
         }

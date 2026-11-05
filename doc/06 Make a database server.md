@@ -72,7 +72,7 @@ But it is possible for the same phrase to come up twice. So before we use a phra
 async function makeUniquePhrase() {
     for (let attempt = 0; attempt < 10; attempt++) {
         const phrase = randomPhrase();
-        const existing = await Picture.findOne({ phrase });
+        const existing = await Picture.findOne({ phrase: phrase });
         if (existing === null) {
             return phrase;
         }
@@ -97,7 +97,7 @@ app.post("/upload", imageMiddleware, async (req, res) => {
     const filename = `${crypto.randomUUID()}.jpg`;
 
     fs.writeFileSync(path.join(picturesFolder, filename), req.body);
-    await Picture.create({ phrase, filename });
+    await Picture.create({ phrase: phrase, filename: filename });
 
     console.log(`Stored ${filename} as ${phrase}`);
     res.send(phrase);
@@ -108,7 +108,7 @@ This works like the upload in **image_server.js**, with three changes:
 
 1. If the request doesn't contain a JPEG image, the server sends back an error (status 400 means "bad request") instead of saving an empty file.
 2. Each picture gets its own file. `crypto.randomUUID()` makes a random name that is (for all practical purposes) never repeated.
-3. `Picture.create` adds a document to the database that connects the phrase to the file. Then the server sends the phrase back to whoever uploaded the picture.
+3. `Picture.create` adds a document to the database that connects the phrase to the file. In `{ phrase: phrase, filename: filename }`, the name on the left of each colon is a field in the schema, and the name on the right is the variable that holds its value. Then the server sends the phrase back to whoever uploaded the picture.
 
 ### Find a picture
 

@@ -36,7 +36,7 @@ function randomPhrase() {
 async function makeUniquePhrase() {
     for (let attempt = 0; attempt < 10; attempt++) {
         const phrase = randomPhrase();
-        const existing = await Picture.findOne({ phrase });
+        const existing = await Picture.findOne({ phrase: phrase });
         if (existing === null) {
             return phrase;
         }
@@ -62,7 +62,7 @@ app.post("/upload", imageMiddleware, async (req, res) => {
     const filename = `${crypto.randomUUID()}.jpg`;
 
     fs.writeFileSync(path.join(picturesFolder, filename), req.body);
-    await Picture.create({ phrase, filename });
+    await Picture.create({ phrase: phrase, filename: filename });
 
     console.log(`Stored ${filename} as ${phrase}`);
     res.send(phrase);

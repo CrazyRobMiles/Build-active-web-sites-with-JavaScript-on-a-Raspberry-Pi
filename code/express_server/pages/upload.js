@@ -27,7 +27,7 @@ router.post("/", imageMiddleware, async (req, res) => {
     const filename = `${crypto.randomUUID()}.jpg`;
 
     fs.writeFileSync(path.join(config.picturesFolder, filename), req.body);
-    await Picture.create({ phrase, filename });
+    await Picture.create({ phrase: phrase, filename: filename });
 
     console.log(`Stored ${filename} as ${phrase}`);
     res.send(phrase);
