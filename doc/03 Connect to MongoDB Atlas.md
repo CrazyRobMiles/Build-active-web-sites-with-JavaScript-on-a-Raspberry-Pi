@@ -74,72 +74,8 @@ mongodb://custardCreamApp:<password>@localhost:27017/custardcream
 
 Both addresses contain the name of the account, its password, where the database is and the name of the database. That's all a program needs to know.
 
-### 5. Store the database address in an environment variable
+You can look at your database on the Atlas website at any time. Go to your cluster and select **Browse Collections** to see the collections and documents in it. It will be empty until a program stores something in it.
 
-All the example programs in this series get the address from an **environment variable** called `DATABASE_URL`. An environment variable is a named value that the terminal passes to every program you start from it. Keeping the address there, rather than in the programs, means that you can share a program without sharing your password. It also means that you can move to a different database without changing the programs at all. You just change the address.
-
-To set the variable in the terminal you are using, enter this, using your own connection string:
-
-```bash
-export DATABASE_URL='mongodb+srv://custardCreamApp:<password>@cluster0.ab1cd.mongodb.net/custardcream?retryWrites=true&w=majority&appName=Cluster0'
-```
-
-The single quotes stop the terminal from doing anything with the special characters in the address, such as the `&` characters. You can check the value like this:
-
-```bash
-echo $DATABASE_URL
-```
-
-This only lasts until you close the terminal. When you open a new one (or log in to the Pi again), the variable has gone. To have it set every time you open a terminal, add the same `export` line to the end of the file `.bashrc` in your home folder. The terminal runs the commands in this file each time it starts:
-
-```bash
-nano ~/.bashrc
-```
-
-Add the `export` line at the very end of the file, then save it and exit. The change takes effect in new terminals. To use it in the current terminal straight away, enter:
-
-```bash
-source ~/.bashrc
-```
-
-Things worth noting:
-
-- `.bashrc` now contains your database password as plain text. Make sure that only you can read the file with `chmod 600 ~/.bashrc`.
-- Only programs started from your terminals get the variable. A program that is started in some other way, for example by the Pi when it boots, doesn't read `.bashrc`, so it has to be given the address in its own settings.
-
-### 6. Check the connection
-
-The **MongoDB Shell**, `mongosh`, is a program that lets you type commands to a database. Later howtos use it to look inside the database. You can install it on your Pi with npm:
-
-```bash
-npm install -g mongosh
-```
-
-The `-g` means that the program is installed for the whole Pi, rather than into a project, so you can use it from any folder. Now connect to your database using the address in the environment variable:
-
-```bash
-mongosh "$DATABASE_URL"
-```
-
-After some messages, you should see a prompt that ends with `custardcream>`. This shows that you have logged in, and that you are using the **custardcream** database. Try storing, finding and deleting a document:
-
-```javascript
-db.connectionCheck.insertOne({ checkedAt: new Date() })
-db.connectionCheck.find()
-db.connectionCheck.drop()
-exit
-```
-
-`insertOne` returns `acknowledged: true`, `find` shows the document you just stored, and `drop` returns `true`. So the program can write, read and delete.
-
-If it doesn't work:
-
-* If the prompt ends with `test>` instead of `custardcream>`, the name of the database is missing from the address (see step 4).
-* If you see `bad auth` or `Authentication failed`, check the username and password in the address.
-* If `mongosh` waits for a while and then reports that it couldn't connect, check that the address of your home network is in the Network Access list (step 3).
-
-You can also look at your database on the Atlas website. Go to your cluster and select **Browse Collections** to see the collections and documents in it.
-
-Now that you have a database, you can find out how a JavaScript program can [use Mongoose to store information in it](/doc/05%20Use%20Mongoose.md).
+You now have a database, and a connection string that a program can use to reach it. Keep a copy of the connection string somewhere safe, because it contains your password. In the next howto you'll store it on your Pi, check that it works, and find out how a JavaScript program can [use Mongoose to store information in the database](/doc/05%20Use%20Mongoose.md).
 
 [home](/README.md)

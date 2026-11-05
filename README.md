@@ -18,9 +18,9 @@ We don't want to embed this in our program code so we create an environment vari
 * **If you have a Raspberry Pi 4 or older, or you don't want to run the database yourself**, use MongoDB Atlas, which runs the database on the internet for you. The free version is plenty for this series. To connect to Atlas follow the steps [here](/doc/03%20Connect%20to%20MongoDB%20Atlas.md)
 * **If you have a Raspberry Pi 5** (ideally with an SSD), you can run MongoDB on the Pi itself, inside a Docker container. To install Docker and MongoDB follow the steps [here](/doc/04%20Install%20Local%20MongoDB.md)
 
-Current versions of MongoDB need an ARMv8.2-A processor, which means a Pi 5. They won't run on a Pi 4 or older, but those models can run all the example programs perfectly well with Atlas. Each howto ends with the address of your database stored in **DATABASE_URL**, and from then on the rest of the series is exactly the same:
+Current versions of MongoDB need an ARMv8.2-A processor, which means a Pi 5. They won't run on a Pi 4 or older, but those models can run all the example programs perfectly well with Atlas. Each howto ends with a connection string for your database. From then on the rest of the series is exactly the same:
 
-* Then find out how a JavaScript program uses the database with Mongoose by following the steps [here](/doc/05%20Use%20Mongoose.md)
+* Then store the connection string in the **DATABASE_URL** environment variable and find out how a JavaScript program uses the database with Mongoose by following the steps [here](/doc/05%20Use%20Mongoose.md)
 * Then make a server that stores pictures in the database by following the steps [here](/doc/06%20Make%20a%20database%20server.md)
 * Then add a view counter to each picture by following the steps [here](/doc/07%20Update%20a%20database.md)
 * Then use Express to organise the site and render its pages by following the steps [here](/doc/08%20Use%20Express%20to%20render%20pages.md)

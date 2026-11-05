@@ -2,6 +2,84 @@
 
 You now have a MongoDB database, either on your Pi or on Atlas. Before we connect it to a web server, let's find out how a JavaScript program can store and find information in it. In this howto we'll make a very simple address book program that you run from the command line. It connects to the database and asks what you want to do. You can add a name and address to the address book, or search for a name and see the addresses that are stored for it.
 
+## Store the connection string
+
+At the end of the last howto you had a **connection string** for your database. It looks like one of these:
+
+```
+mongodb+srv://custardCreamApp:<password>@cluster0.ab1cd.mongodb.net/custardcream?retryWrites=true&w=majority&appName=Cluster0
+mongodb://custardCreamApp:<password>@localhost:27017/custardcream
+```
+
+The connection string is the most important thing you need to use the database. It says where the database is, which database to use, and the name and password of the account to log in with. As far as a program is concerned, the connection string *is* the database. The program works in exactly the same way whether the string points at Atlas or at your Pi. And anyone who has the string can read, change and delete everything in the database.
+
+That means the connection string shouldn't be written into the program code. If it were, anyone you gave a copy of the program to (or anyone who saw it on GitHub) would have your password. And if you wanted to move to a different database, you'd have to change every program that uses it.
+
+Instead, we store the connection string in an **environment variable** on the Pi. An environment variable is a named value that the terminal passes to every program you start from it. All the example programs in this series get the connection string from an environment variable called **DATABASE_URL**. The programs only contain the name of the variable, not the string itself. To move to a different database, you just change the variable.
+
+To set the variable in the terminal you are using, enter this, using your own connection string:
+
+```bash
+export DATABASE_URL='mongodb+srv://custardCreamApp:<password>@cluster0.ab1cd.mongodb.net/custardcream?retryWrites=true&w=majority&appName=Cluster0'
+```
+
+The single quotes stop the terminal from doing anything with the special characters in the string, such as the `&` characters. You can check the value like this:
+
+```bash
+echo $DATABASE_URL
+```
+
+This only lasts until you close the terminal. When you open a new one (or log in to the Pi again), the variable has gone. To have it set every time you open a terminal, add the same `export` line to the end of the file `.bashrc` in your home folder. The terminal runs the commands in this file each time it starts:
+
+```bash
+nano ~/.bashrc
+```
+
+Add the `export` line at the very end of the file, then save it and exit. The change takes effect in new terminals. To use it in the current terminal straight away, enter:
+
+```bash
+source ~/.bashrc
+```
+
+Things worth noting:
+
+- `.bashrc` now contains your database password as plain text. Make sure that only you can read the file with `chmod 600 ~/.bashrc`.
+- Only programs started from your terminals get the variable. A program that is started in some other way, for example by the Pi when it boots, doesn't read `.bashrc`, so it has to be given the connection string in its own settings.
+
+## Check the connection string
+
+Before we use the connection string in a program, it's worth checking that it works. Then if something goes wrong later, you know the problem is in the program, not the connection string.
+
+The **MongoDB Shell**, `mongosh`, is a program that lets you type commands to a database. Later howtos use it to look inside the database. You can install it on your Pi with npm:
+
+```bash
+npm install -g mongosh
+```
+
+The `-g` means that the program is installed for the whole Pi, rather than into a project, so you can use it from any folder. Now connect to your database using the connection string in the environment variable:
+
+```bash
+mongosh "$DATABASE_URL"
+```
+
+This works with any MongoDB database, wherever it is running, because everything `mongosh` needs to know is in the connection string. After some messages, you should see a prompt that ends with `custardcream>`. This shows that you have logged in, and that you are using the **custardcream** database. Try storing, finding and deleting a document:
+
+```javascript
+db.connectionCheck.insertOne({ checkedAt: new Date() })
+db.connectionCheck.find()
+db.connectionCheck.drop()
+exit
+```
+
+`insertOne` returns `acknowledged: true`, `find` shows the document you just stored, and `drop` returns `true`. So a program that uses this connection string can write, read and delete.
+
+If it doesn't work:
+
+* If `mongosh` says that the address is invalid, check that **DATABASE_URL** is set with `echo $DATABASE_URL`.
+* If the prompt ends with `test>` instead of `custardcream>`, the name of the database is missing from the end of the connection string.
+* If you see `bad auth` or `Authentication failed`, check the username and password in the connection string.
+* If `mongosh` waits for a while and then reports that it couldn't connect, it can't reach the database. If you are using Atlas, check that the address of your home network is in the Network Access list. If MongoDB is running on your Pi, check that it is running with `docker ps`.
+
 ## Install Mongoose
 
 A JavaScript program can talk to MongoDB using a library called **Mongoose**. Mongoose is a library, so you add it to a Node project with npm, in the same way as Express. Let's make a project for the address book:
@@ -182,7 +260,7 @@ A Node program keeps running as long as it has something open that might send it
 
 ## Run the program
 
-Make sure that **DATABASE_URL** is set to the address of your database, as described at the end of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#5-store-the-database-address-in-an-environment-variable) or [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#7-store-the-database-address-in-an-environment-variable) howto. Then run the program, type **a** and add an entry:
+Make sure that **DATABASE_URL** is set to the address of your database, as described in [Store the connection string](#store-the-connection-string). Then run the program, type **a** and add an entry:
 
 ```bash
 node address_book.js
@@ -226,7 +304,7 @@ The entry was not stored: AddressBook validation failed: address: Path `address`
 ### If it doesn't work
 
 * If the program waits for about 30 seconds and then stops with an error that contains **MongooseServerSelectionError**, it couldn't reach the database. If you are using a database on your Pi, check that MongoDB is running, as described in step 4 of the [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#4-start-it-and-confirm-its-healthy) howto. If you are using Atlas, check that the address of your home network is in the Network Access list, as described in step 3 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#3-let-your-pi-connect) howto.
-* If you see **Authentication failed** or **bad auth**, check the name and password in the address.
+* If you see **Authentication failed** or **bad auth**, check the name and password in the connection string.
 
 ## Look inside the database
 
@@ -236,7 +314,7 @@ You can see the documents that the program has made by logging in to the databas
 docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
-If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in step 6 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#6-check-the-connection) howto.
+If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in [Check the connection string](#check-the-connection-string).
 
 ```javascript
 db.addresses.find()

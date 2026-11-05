@@ -84,7 +84,7 @@ Log in to the database and look at the pictures:
 docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
-If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in step 6 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#6-check-the-connection) howto.
+If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in the [Use Mongoose](/doc/05%20Use%20Mongoose.md#check-the-connection-string) howto.
 
 ```javascript
 db.examplepictures.find()

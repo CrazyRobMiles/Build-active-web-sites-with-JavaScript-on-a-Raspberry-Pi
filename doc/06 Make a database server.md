@@ -169,7 +169,7 @@ The program gets the address of the database from an **environment variable** ca
 
 ## Run the server
 
-Make sure that **DATABASE_URL** is set to the address of your database, as described at the end of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#5-store-the-database-address-in-an-environment-variable) or [Install Local MongoDB](/doc/04%20Install%20Local%20MongoDB.md#7-store-the-database-address-in-an-environment-variable) howto. Then start the server:
+Make sure that **DATABASE_URL** is set to the address of your database, as described in the [Use Mongoose](/doc/05%20Use%20Mongoose.md#store-the-connection-string) howto. Then start the server:
 
 ```bash
 node db_image_server.js
@@ -213,7 +213,7 @@ You can see the documents the server has made by logging in to the database:
 docker exec -it mongodb mongosh --username custardCreamApp --authenticationDatabase custardcream custardcream
 ```
 
-If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in step 6 of the [Connect to MongoDB Atlas](/doc/03%20Connect%20to%20MongoDB%20Atlas.md#6-check-the-connection) howto.
+If you are using Atlas, log in with `mongosh "$DATABASE_URL"` instead, as described in the [Use Mongoose](/doc/05%20Use%20Mongoose.md#check-the-connection-string) howto.
 
 Then ask for the contents of the collection:
 
