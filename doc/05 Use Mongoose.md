@@ -99,16 +99,77 @@ The `npm install` command downloads Mongoose (and the libraries that Mongoose us
   }
 ```
 
-If you give someone a copy of your project without the **node_modules** folder, they can run `npm install` to get all the libraries that **package.json** lists. That's how the example projects in this repository work. The finished address book program is in the **code/address_book** folder, so you can install the libraries for it like this:
+If you give someone a copy of your project without the **node_modules** folder, they can run `npm install` to get all the libraries that **package.json** lists. That's how the example projects in this repository work. The finished programs for this howto are in the **code/address_book** folder, so you can install the libraries for them like this:
 
 ```bash
 cd code/address_book
 npm install
 ```
 
-## The program
+## A first example
 
-The program is in the file **address_book.js**. This is how it starts:
+Before we make the address book, let's look at the smallest program that stores something in the database and then finds it again. It is in the file **address_demo.js**:
+
+```javascript
+const mongoose = require("mongoose");
+
+async function addressDemo() {
+    // Connect to the database
+    await mongoose.connect(process.env.DATABASE_URL);
+    const db = mongoose.connection;
+    console.log(`Connected to the ${db.name} database`);
+
+    // Describe an address book entry
+    const addressSchema = new mongoose.Schema({
+        name: { type: String, required: true },
+        address: { type: String, required: true }
+    });
+
+    const AddressBook = mongoose.model("AddressBook", addressSchema, "addresses");
+
+    // Store an entry
+    const entry = await AddressBook.create({ name: "Rob", address: "Hull" });
+    console.log(`Added ${entry.name} with id ${entry._id}`);
+
+    // Find all the entries with the name Rob
+    const entries = await AddressBook.find({ name: "Rob" });
+
+    for (const found of entries) {
+        console.log(`Found ${found.name}: ${found.address}`);
+    }
+
+    await db.close();
+}
+
+addressDemo();
+```
+
+The program does four things:
+
+1. It connects to the database whose connection string is in **DATABASE_URL**.
+2. It describes what an address book entry looks like: a name and an address, which are both strings.
+3. It stores an entry with the name **Rob** and the address **Hull**.
+4. It finds all the entries with the name **Rob**, and prints each one.
+
+Then it closes the connection, so that the program can finish. Run it:
+
+```bash
+node address_demo.js
+```
+
+```
+Connected to the custardcream database
+Added Rob with id 6aec5bb673eb5a42bd577ae8
+Found Rob: Hull
+```
+
+Your id will be different. Run the program again and you'll see that it finds two entries for **Rob**. Each time the program runs it stores another entry, and the entries from earlier runs are still in the database.
+
+That's all a program needs to do to use a database. But a program that can only store **Rob** isn't very useful. The address book program uses exactly the same steps, but asks the user what to store and what to look for. We'll work through it step by step, and look at each part in more detail.
+
+## The address book program
+
+The address book program is in the file **address_book.js**. This is how it starts:
 
 ```javascript
 const mongoose = require("mongoose");

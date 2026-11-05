@@ -143,7 +143,11 @@ At this point MongoDB has exactly one account:
 
 - **`mongoAdmin`** — the root (administrator) account. You didn't create it by hand: the official `mongo` image created it automatically the first time the container started, from the `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` values in `docker-compose.yml` (step 3). It's stored in MongoDB's built-in `admin` database and can do anything to every database on the server, including creating and deleting users. That makes it the right account for setting things up and for maintenance, but the wrong one for a program to use every day — if a program's connection string were ever exposed, or a bug in a program ran the wrong query, root access would put every database on this MongoDB at risk.
 
-This step creates a database for the programs in this series, and an account for them to use. The examples follow on from the Custard Cream Server, so the database is called `custardcream` and the account is called `custardCreamApp`. All the examples share this database, and each one keeps its documents in its own collection.
+#### A database for this project
+
+Everything so far has set up the MongoDB server itself. Nothing in it belongs to a particular project, and the same server can hold databases for lots of different projects. Now we are going to create a database for one project, the example programs in this series, along with an account that only those programs use. If you had other projects that needed a database, you would do this again for each one, giving each project its own database and its own account (see [Databases for other apps](#databases-for-other-apps) below).
+
+The examples follow on from the Custard Cream Server, so the database is called `custardcream` and the account is called `custardCreamApp`. All the examples share this database, and each one keeps its documents in its own collection.
 
 This step uses `mongoAdmin` to create one more account in MongoDB:
 
