@@ -1,4 +1,4 @@
-# Use Express to render pages
+# Use EJS to render pages
 
 The servers in **tiny_db_server** work, but they wouldn't be much fun to look after as they grow. Everything is in one file, and each web page is a string of HTML in the middle of the JavaScript, with values from the database dropped into it. That's fine for a page with one picture and a view count. But a real site has lots of pages, and each page shows lots of information. Imagine a single file with dozens of routes, each building a big page out of strings, and you can see the problem:
 
@@ -6,7 +6,15 @@ The servers in **tiny_db_server** work, but they wouldn't be much fun to look af
 * HTML in a JavaScript string is hard to read, and your editor can't help you with it.
 * If one of the values you put into a page contains HTML, it becomes part of the page. Someone could store a value that adds their own content (or their own programs) to your site.
 
-Express has a better way to manage a site. In this howto we'll build the picture server again as a properly organised Express application. Each part of the site will be in its own file, and pages will be made from **templates**. A template is a web page with gaps in it, and Express fills the gaps with values from the database.
+In this howto we'll build the picture server again as a properly organised Express application. Each part of the site will be in its own file, and pages will be made from **templates**. A template is a web page with gaps in it. When the server needs to send a page, it fills the gaps with values from the database.
+
+Express doesn't fill in templates itself. It hands the job to a **template engine**, a library that knows how to read templates. There are lots of template engines, and we'll use one called **EJS**, which stands for "Embedded JavaScript". An EJS template is an ordinary HTML file with some special tags added to it. The tags hold small pieces of JavaScript, which say what to put in each gap. For example, this line shows the number of times a picture has been viewed:
+
+```html
+<p>Views: <%= picture.views %></p>
+```
+
+When the page is made, EJS replaces the tag with the value of `picture.views`. EJS makes sure that any value it puts into a page is shown as text, so a value can't add its own HTML to your site. You'll see more of the tags later in this howto.
 
 ## The application
 
@@ -45,7 +53,7 @@ cd code/express_server
 npm install
 ```
 
-As well as **express** and **mongoose**, this installs **ejs**, which stands for "Embedded JavaScript". This is the template library we'll use.
+As well as **express** and **mongoose**, this installs **ejs**, the EJS template engine.
 
 ## The schema
 
@@ -91,7 +99,7 @@ router.get("/:phrase", async (req, res) => {
 });
 ```
 
-This works just like the view page in the counter server. It finds the picture, adds one to the view count and saves it. The difference is at the end. Instead of building a page out of a string, the router calls `res.render`. This tells Express to make a page from the template called **view**, and gives the template the picture document to work with. If the picture isn't found, the router renders the **notFound** template instead.
+This works just like the view page in the counter server. It finds the picture, adds one to the view count and saves it. The difference is at the end. Instead of building a page out of a string, the router calls `res.render`. This tells Express to use EJS to make a page from the template called **view**, and gives the template the picture document to work with. If the picture isn't found, the router renders the **notFound** template instead.
 
 The routers are connected together in **server.js**:
 

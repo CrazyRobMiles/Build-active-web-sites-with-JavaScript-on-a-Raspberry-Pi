@@ -11,10 +11,10 @@ function randomPhrase() {
 // Keep picking phrases until we find one that isn't in the database
 async function makeUniquePhrase() {
     for (let attempt = 0; attempt < 10; attempt++) {
-        const phrase = randomPhrase();
-        const existing = await Picture.findOne({ phrase: phrase });
+        const newPhrase = randomPhrase();
+        const existing = await Picture.findOne({ phrase: newPhrase });
         if (existing === null) {
-            return phrase;
+            return newPhrase;
         }
     }
     throw new Error("Could not find a free three word phrase");

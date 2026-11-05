@@ -23,14 +23,14 @@ router.post("/", imageMiddleware, async (req, res) => {
         return;
     }
 
-    const phrase = await makeUniquePhrase();
-    const filename = `${crypto.randomUUID()}.jpg`;
+    const newPhrase = await makeUniquePhrase();
+    const newFilename = `${crypto.randomUUID()}.jpg`;
 
-    fs.writeFileSync(path.join(config.picturesFolder, filename), req.body);
-    await Picture.create({ phrase: phrase, filename: filename });
+    fs.writeFileSync(path.join(config.picturesFolder, newFilename), req.body);
+    await Picture.create({ phrase: newPhrase, filename: newFilename });
 
-    console.log(`Stored ${filename} as ${phrase}`);
-    res.send(phrase);
+    console.log(`Stored ${newFilename} as ${newPhrase}`);
+    res.send(newPhrase);
 });
 
 module.exports = router;

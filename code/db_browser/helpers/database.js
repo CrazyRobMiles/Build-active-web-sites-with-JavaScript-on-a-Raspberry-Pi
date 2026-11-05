@@ -19,8 +19,8 @@ async function getCollections() {
 }
 
 // Returns true if the database contains a collection with this name
-async function collectionExists(name) {
-    const list = await mongoose.connection.db.listCollections({ name: name }).toArray();
+async function collectionExists(collectionName) {
+    const list = await mongoose.connection.db.listCollections({ name: collectionName }).toArray();
     return list.length > 0;
 }
 
